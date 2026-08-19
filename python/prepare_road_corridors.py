@@ -1,6 +1,5 @@
 """
-Edmonton Road-Corridor Vegetation Change Road data preparation for Google Earth Engine
-
+Edmonton Road-Corridor Vegetation Change road data preparation for Google Earth Engine
 
 This script:
 1. Downloads Edmonton's public road-network data.
@@ -25,7 +24,6 @@ BASE_URL = "https://data.edmonton.ca/resource"
 DATASET_ID = "9j8t-zm52"
 
 TARGET_CRS = "EPSG:32612"
-GEE_CRS = "EPSG:4326"
 BUFFER_DISTANCE_M = 15
 
 PROJECT_FOLDER = Path(__file__).resolve().parent.parent
@@ -269,9 +267,6 @@ gee_buffers = road_buffers[
     ]
 ].copy()
 
-gee_buffers = gee_buffers.to_crs(GEE_CRS)
-
-
 
 
 
@@ -291,7 +286,4 @@ with tempfile.TemporaryDirectory() as temp_folder:
         root_dir=temp_folder)
 
 
-
-print(f"GEE output CRS: {gee_buffers.crs}")
 print(f"GEE upload file saved to:\n{GEE_ZIP_PATH}")
-print("\n--- Road Preparation Complete ---")
