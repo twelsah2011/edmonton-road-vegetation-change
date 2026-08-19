@@ -5,11 +5,10 @@ Process Google Earth Engine road-level NDVI results
 This script:
 1. Reads the GeoJSON exported from Google Earth Engine.
 2. Checks required fields, geometry, and NDVI values.
-3. Verifies the NDVI change = 2025 - 2020 NDVI.
-4. Classifies into five classes.
-5. Removes unnecessary Google Earth Engine system IDs from CSV outputs.
-6. Creates Top 10 increase and decrease ranking CSV tables.
-7. Reprojects the final spatial results for ArcGIS Pro.
+3. Classifies into five classes.
+4. Removes unnecessary Google Earth Engine system IDs from CSV outputs.
+5. Creates Top 10 increase and decrease ranking CSV tables.
+6. Reprojects the final spatial results for ArcGIS Pro.
 """
 
 from pathlib import Path
@@ -61,7 +60,7 @@ print("\n--- Reading GEE Road-Level NDVI Results ---")
 road_ndvi = gpd.read_file(INPUT_PATH)
 
 print(f"Feature count: {len(road_ndvi):,}")
-print(f"CRS: {road_ndvi.crs}")
+print(f"Input CRS: {road_ndvi.crs}")
 
 
 missing_fields = [field for field in REQUIRED_FIELDS if field not in road_ndvi.columns]
@@ -180,16 +179,14 @@ road_ndvi["change_class"] = (road_ndvi["change_class"].astype(str))
 
 
 # Save final spatial results
+# The GeoJSON exported from GEE is read as EPSG:4326.
+# Reproject it back to the Edmonton project CRS for the final ArcGIS Pro output.
 print("\n--- Saving Final GeoPackage ---")
 
-# GEE exports vector results in geographic coordinates. Reproject back to the
-# Edmonton project CRS before using the final layer in ArcGIS Pro.
 road_ndvi = road_ndvi.to_crs(TARGET_CRS)
-
 print(f"Output CRS: {road_ndvi.crs}")
 
 road_ndvi.to_file(PROCESSED_OUTPUT_PATH, layer = "road_ndvi_results", driver = "GPKG")
-
 print(f"Saved to:\n{PROCESSED_OUTPUT_PATH}")
 
 
